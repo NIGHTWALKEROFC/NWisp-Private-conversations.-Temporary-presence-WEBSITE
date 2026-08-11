@@ -580,6 +580,80 @@ section:not(.hero){
 .footer-sub{ font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); }
 
 /* ============================================================
+   APP UPDATES — overlay panel (not part of normal page flow;
+   only reachable via the nav link)
+   ============================================================ */
+.updates-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(6,7,10,0.72);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease;
+}
+.updates-overlay.is-open{
+  opacity: 1;
+  visibility: visible;
+}
+.updates-panel{
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 32px 34px;
+  text-align: center;
+  transform: translateY(10px) scale(0.98);
+  transition: transform .22s ease;
+  box-shadow: 0 40px 100px -30px rgba(0,0,0,0.8);
+}
+.updates-overlay.is-open .updates-panel{
+  transform: translateY(0) scale(1);
+}
+.updates-close{
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+}
+.updates-close:hover{ color: var(--amber); border-color: var(--amber-dim); }
+.updates-close svg{ width: 15px; height: 15px; }
+.updates-icon{
+  width: 46px; height: 46px;
+  margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  color: var(--amber);
+}
+.updates-icon svg{ width: 22px; height: 22px; }
+.updates-panel .section-eyebrow{ margin-bottom: 10px; }
+.updates-title{
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.updates-body{
+  font-size: 14.5px;
+  color: var(--text-muted);
+  max-width: 34ch;
+  margin: 0 auto;
+}
+
+/* ============================================================
    MOTION PREFERENCES
    ============================================================ */
 @media (prefers-reduced-motion: reduce){
@@ -606,8 +680,9 @@ section:not(.hero){
     <a href="#status">Status</a>
     <a href="#involved">Get involved</a>
     <a href="#contact">Contact</a>
+    <a href="#" id="updates-trigger">App updates</a>
   </nav>
-  <a class="nav-cta" href="https://github.com/NIGHTWALKEROFC/NWisp-Private-conversations.-Temporary-presence" target="_blank" rel="noopener">Repo ↗</a>
+  <a class="nav-cta" href="https://github.com/NIGHTWALKEROFC" target="_blank" rel="noopener">GitHub ↗</a>
 </header>
 
 <main id="top">
@@ -621,7 +696,7 @@ section:not(.hero){
       <p class="hero-copy">A chat app that doesn't try to remember you. Talk under a username instead of your phone number, send messages that clear themselves off the server in a day, and post Stories that are gone by the time most apps would still be nudging you to like them.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#involved">Get involved</a>
-        <a class="btn btn-ghost" href="https://github.com/NIGHTWALKEROFC/NWisp-Private-conversations.-Temporary-presence" target="_blank" rel="noopener">Follow the build on GitHub</a>
+        <a class="btn btn-ghost" href="https://github.com/NIGHTWALKEROFC" target="_blank" rel="noopener">Follow on GitHub</a>
       </div>
     </div>
 
@@ -753,7 +828,7 @@ section:not(.hero){
   <section id="status" class="status">
     <p class="section-eyebrow">Right now</p>
     <h2 class="section-title">Where the build actually stands.</h2>
-    <p class="status-copy">NWisp is being built in the open, by one developer, entirely from a phone — no laptop, no dev machine. Core chat and Stories work end to end. What's left before a real release is mostly the unglamorous stuff: notification delivery, tightening the server-side rules, and phone-number sign-in. There's no fixed release date yet, and that's said here on purpose instead of promising one.</p>
+    <p class="status-copy">NWisp is being built in the open by one developer. Core chat and Stories work end to end. What's left before a real release is mostly the unglamorous stuff: notification delivery, tightening the server-side rules, and phone-number sign-in. There's no fixed release date yet, and that's said here on purpose instead of promising one.</p>
     <div class="status-track">
       <div class="status-item is-done">
         <span class="status-dot"></span>
@@ -814,7 +889,7 @@ section:not(.hero){
   <section id="contact" class="contact">
     <p class="section-eyebrow">Built by</p>
     <h2 class="section-title">Mohammed Rinshan — NightWalker</h2>
-    <p class="contact-copy">A self-taught developer from Malappuram, Kerala, building apps and security tools from a single Android phone, no laptop involved. NWisp is the current main project. More at the <a href="https://nightwalkerofc.github.io/" target="_blank" rel="noopener">portfolio site</a>.</p>
+    <p class="contact-copy">A self-taught developer from Malappuram, Kerala, building apps and security tools. NWisp is the current main project. More at the <a href="https://nightwalkerofc.github.io/" target="_blank" rel="noopener">portfolio site</a>.</p>
 
     <div class="contact-grid">
       <a class="contact-card" href="mailto:rinshan602@gmail.com" target="_blank" rel="noopener">
@@ -833,9 +908,9 @@ section:not(.hero){
         <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 4 3 11.2l6 2.2M21 4l-3.2 16-6.8-5.6M21 4l-11.5 9.4M9 13.4v5.4l3-3.3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
         <div><span class="contact-label">Telegram (alt)</span><span class="contact-value">@nightwalker_ofc0</span></div>
       </a>
-      <a class="contact-card" href="https://github.com/NIGHTWALKEROFC/NWisp-Private-conversations.-Temporary-presence" target="_blank" rel="noopener">
+      <a class="contact-card" href="https://github.com/NIGHTWALKEROFC" target="_blank" rel="noopener">
         <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.8c-2.7.6-3.3-1.3-3.3-1.3-.4-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .8.1-.7.4-1.1.6-1.4-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-1.9 1-2.6-.1-.3-.4-1.4.1-2.9 0 0 .8-.3 2.8 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .6 1.5.2 2.6.1 2.9.6.7 1 1.6 1 2.6 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
-        <div><span class="contact-label">GitHub</span><span class="contact-value">NWisp repo</span></div>
+        <div><span class="contact-label">GitHub</span><span class="contact-value">@NIGHTWALKEROFC</span></div>
       </a>
       <a class="contact-card" href="https://nightwalkerofc.github.io/" target="_blank" rel="noopener">
         <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.6"/><path d="M2.8 12h18.4M12 2.8c2.4 2.5 3.7 5.7 3.7 9.2s-1.3 6.7-3.7 9.2c-2.4-2.5-3.7-5.7-3.7-9.2S9.6 5.3 12 2.8Z" stroke="currentColor" stroke-width="1.6"/></svg></div>
@@ -850,6 +925,46 @@ section:not(.hero){
   <p>NWisp — private conversations, temporary presence.</p>
   <p class="footer-sub">Built by Mohammed Rinshan (NightWalker) · Malappuram, Kerala · 2026</p>
 </footer>
+
+<!-- APP UPDATES — off-flow panel, opened only from the nav link -->
+<div class="updates-overlay" id="updates-overlay">
+  <div class="updates-panel" role="dialog" aria-modal="true" aria-labelledby="updates-title">
+    <button class="updates-close" id="updates-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div class="updates-icon">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2.8c2.4 2.5 3.7 5.7 3.7 9.2s-1.3 6.7-3.7 9.2c-2.4-2.5-3.7-5.7-3.7-9.2S9.6 5.3 12 2.8Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.6"/></svg>
+    </div>
+    <p class="section-eyebrow">App updates</p>
+    <h3 id="updates-title" class="updates-title">No new updates right now</h3>
+    <p class="updates-body">Release notes and build announcements will be posted here as soon as there's something worth sharing. Check back later, or follow along on GitHub for the day-to-day progress.</p>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var trigger = document.getElementById('updates-trigger');
+    var overlay = document.getElementById('updates-overlay');
+    var closeBtn = document.getElementById('updates-close');
+
+    function openOverlay(e){
+      if(e) e.preventDefault();
+      overlay.classList.add('is-open');
+    }
+    function closeOverlay(){
+      overlay.classList.remove('is-open');
+    }
+
+    trigger.addEventListener('click', openOverlay);
+    closeBtn.addEventListener('click', closeOverlay);
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeOverlay();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeOverlay();
+    });
+  })();
+</script>
 
 </body>
 </html>
