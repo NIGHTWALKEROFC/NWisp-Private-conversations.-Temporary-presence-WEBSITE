@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NWisp — Private conversations. Temporary presence.</title>
+<meta name="description" content="NWisp is a privacy-first chat app with 24-hour disappearing messages and Stories, built username-first with no permanent server history. In development for Android.">
+<meta property="og:title" content="NWisp — Private conversations. Temporary presence.">
+<meta property="og:description" content="A privacy-first chat app. Messages live on the server for 24 hours, then they're gone. Username-first identity, end-to-end encrypted chat, disappearing Stories.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%23090B10' stroke='%23FFB37B' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23FFB37B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   NWisp — design tokens
+   ============================================================ */
+:root{
+  --bg: #090B10;
+  --bg-alt: #0D1016;
+  --panel: #12151C;
+  --panel-2: #171B24;
+  --border: #1E2330;
+  --border-soft: #191D27;
+
+  --text: #ECEFF4;
+  --text-muted: #8B93A3;
+  --text-dim: #565E6E;
+
+  --amber: #FFB37B;
+  --amber-dim: #8A6647;
+  --blue: #6FA8FF;
+  --green: #7CDB9C;
+
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius: 14px;
+  --radius-sm: 8px;
+  --wrap: 1120px;
+}
+
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* subtle film-grain / noise texture, purely atmospheric */
+.grain{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+a{ color: inherit; text-decoration: none; }
+ul{ margin: 0; padding: 0; list-style: none; }
+h1,h2,h3,h4{ font-family: var(--font-display); margin: 0; font-weight: 600; }
+p{ margin: 0; }
+
+.section-eyebrow{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin: 0 0 12px;
+}
+.section-title{
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  max-width: 40ch;
+  margin-bottom: 40px;
+  color: var(--text);
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px clamp(20px, 5vw, 56px);
+  background: rgba(9,11,16,0.78);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.nav-brand{
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+.brand-mark{
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 0 3px rgba(255,179,123,0.15);
+  animation: breathe 3.4s ease-in-out infinite;
+}
+.nav-links{
+  display: flex;
+  gap: 28px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.nav-links a:hover{ color: var(--text); }
+.nav-cta{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: border-color .2s, color .2s;
+}
+.nav-cta:hover{ border-color: var(--amber-dim); color: var(--amber); }
+
+@media (max-width: 760px){
+  .nav-links{ display: none; }
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: clamp(48px, 8vw, 96px) clamp(20px, 5vw, 56px) clamp(40px, 6vw, 72px);
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px;
+  align-items: center;
+}
+@media (max-width: 900px){
+  .hero{ grid-template-columns: 1fr; }
+}
+
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 100px;
+  margin-bottom: 22px;
+}
+.hero h1{
+  font-size: clamp(3.2rem, 9vw, 5.4rem);
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  background: linear-gradient(180deg, #FFFFFF 0%, #B9C0CE 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.tagline{
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+  color: var(--amber);
+  margin: 14px 0 22px;
+  line-height: 1.3;
+}
+.hero-copy{
+  max-width: 46ch;
+  color: var(--text-muted);
+  font-size: 16.5px;
+  margin-bottom: 34px;
+}
+.hero-actions{ display: flex; flex-wrap: wrap; gap: 14px; }
+
+.btn{
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14.5px;
+  padding: 13px 22px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform .15s ease, background .2s, border-color .2s, color .2s;
+  border: 1px solid transparent;
+}
+.btn:hover{ transform: translateY(-1px); }
+.btn-primary{
+  background: var(--amber);
+  color: #1B1206;
+}
+.btn-primary:hover{ background: #ffc196; }
+.btn-ghost{
+  border-color: var(--border);
+  color: var(--text);
+}
+.btn-ghost:hover{ border-color: var(--amber-dim); color: var(--amber); }
+
+/* --- hero visual: phone + presence ring --- */
+.hero-visual{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 420px;
+}
+.phone{
+  position: relative;
+  width: 236px;
+  height: 460px;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--border);
+  border-radius: 34px;
+  padding: 30px 16px 16px;
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+.phone-notch{
+  position: absolute;
+  top: 12px; left: 50%;
+  transform: translateX(-50%);
+  width: 64px; height: 6px;
+  border-radius: 100px;
+  background: var(--border);
+}
+.phone-screen{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.chat-row{ display: flex; }
+.row-right{ justify-content: flex-end; }
+.bubble{
+  max-width: 82%;
+  padding: 10px 13px;
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.4;
+  animation: bubble-in 0.6s ease both;
+}
+.bubble-in{
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+  color: var(--text);
+}
+.bubble-out{
+  background: rgba(111,168,255,0.14);
+  border: 1px solid rgba(111,168,255,0.3);
+  border-bottom-right-radius: 4px;
+  color: #D6E4FF;
+}
+.bubble-ghost{
+  animation: bubble-in 0.6s ease 0.4s both, ghost-fade 5s ease-in-out 2.5s infinite;
+}
+
+.presence-ring{
+  position: absolute;
+  right: -6px;
+  bottom: 8px;
+  width: 108px;
+  height: 108px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ring-svg{ position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-track{
+  fill: var(--bg);
+  stroke: var(--border);
+  stroke-width: 5;
+}
+.ring-progress{
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 327;
+  stroke-dashoffset: 327;
+  animation: ring-drain 24s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255,179,123,0.55));
+}
+.ring-label{
+  position: relative;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+.ring-number{ display: block; font-size: 22px; font-weight: 500; color: var(--text); }
+.ring-unit{ display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+
+@keyframes ring-drain{
+  0%{ stroke-dashoffset: 0; }
+  100%{ stroke-dashoffset: 327; }
+}
+@keyframes bubble-in{
+  from{ opacity: 0; transform: translateY(6px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+@keyframes ghost-fade{
+  0%, 100%{ opacity: 1; filter: blur(0); }
+  55%{ opacity: 0.12; filter: blur(1.5px); }
+}
+@keyframes breathe{
+  0%, 100%{ opacity: 1; box-shadow: 0 0 0 3px rgba(255,179,123,0.15); }
+  50%{ opacity: 0.55; box-shadow: 0 0 0 6px rgba(255,179,123,0.06); }
+}
+
+@media (max-width: 900px){
+  .hero-visual{ margin-top: 12px; }
+}
+
+/* ============================================================
+   SHARED SECTION WRAPPER
+   ============================================================ */
+section:not(.hero){
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: clamp(56px, 8vw, 88px) clamp(20px, 5vw, 56px);
+}
+
+/* ============================================================
+   CONCEPT — pillars
+   ============================================================ */
+.pillars{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.pillar{
+  background: var(--bg-alt);
+  padding: 34px 28px;
+}
+.pillar-icon{
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--amber);
+  margin-bottom: 18px;
+}
+.pillar-icon svg{ width: 22px; height: 22px; }
+.pillar h3{
+  font-size: 17.5px;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.pillar p{ color: var(--text-muted); font-size: 14.5px; }
+
+@media (max-width: 800px){
+  .pillars{ grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   FEATURES
+   ============================================================ */
+.feature-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.feature-card{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 26px 22px;
+}
+.feature-card h4{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 16px;
+}
+.feature-card li{
+  font-size: 14px;
+  color: var(--text-muted);
+  padding: 8px 0;
+  border-top: 1px solid var(--border-soft);
+}
+.feature-card li:first-child{ border-top: none; padding-top: 0; }
+
+@media (max-width: 1000px){
+  .feature-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px){
+  .feature-grid{ grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   SCOPE (what's not here)
+   ============================================================ */
+.scope{ border-top: 1px solid var(--border-soft); }
+.scope-copy{
+  color: var(--text-muted);
+  max-width: 62ch;
+  margin-bottom: 26px;
+  font-size: 15.5px;
+}
+.chip-row{ display: flex; flex-wrap: wrap; gap: 10px; }
+.chip{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-dim);
+  border: 1px dashed var(--border);
+  padding: 7px 13px;
+  border-radius: 100px;
+}
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+.status{ border-top: 1px solid var(--border-soft); }
+.status-copy{
+  color: var(--text-muted);
+  max-width: 66ch;
+  margin-bottom: 36px;
+  font-size: 15.5px;
+}
+.status-track{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  max-width: 720px;
+}
+.status-item{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-alt);
+}
+.status-dot{
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.is-done .status-dot{ background: var(--green); }
+.is-progress .status-dot{ background: var(--amber); animation: breathe 2.4s ease-in-out infinite; }
+.is-pending .status-dot{ background: var(--text-dim); }
+.status-text{ font-size: 14px; color: var(--text-muted); }
+.is-done .status-text{ color: var(--text); }
+
+@media (max-width: 640px){
+  .status-track{ grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   GET INVOLVED
+   ============================================================ */
+.involved{
+  border-top: 1px solid var(--border-soft);
+  background: radial-gradient(60% 100% at 20% 0%, rgba(255,179,123,0.05), transparent);
+}
+.involved-copy{
+  color: var(--text-muted);
+  max-width: 60ch;
+  margin-bottom: 36px;
+  font-size: 15.5px;
+}
+.involved-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 36px;
+}
+.involved-card{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px 18px;
+}
+.involved-card h4{ font-size: 14.5px; margin-bottom: 8px; }
+.involved-card p{ font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+
+@media (max-width: 1000px){
+  .involved-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px){
+  .involved-grid{ grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact{ border-top: 1px solid var(--border-soft); }
+.contact-copy{
+  color: var(--text-muted);
+  max-width: 62ch;
+  margin-bottom: 36px;
+  font-size: 15.5px;
+}
+.contact-copy a{ color: var(--amber); border-bottom: 1px solid var(--amber-dim); }
+.contact-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.contact-card{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 18px;
+  transition: border-color .2s, transform .15s;
+}
+.contact-card:hover{ border-color: var(--amber-dim); transform: translateY(-2px); }
+.contact-icon{
+  width: 38px; height: 38px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  color: var(--amber);
+}
+.contact-icon svg{ width: 18px; height: 18px; }
+.contact-label{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.contact-value{ display: block; font-size: 14.5px; margin-top: 2px; }
+
+@media (max-width: 800px){
+  .contact-grid{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px){
+  .contact-grid{ grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer{
+  border-top: 1px solid var(--border-soft);
+  padding: 32px clamp(20px, 5vw, 56px) 44px;
+  max-width: var(--wrap);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.footer p{ font-size: 13.5px; color: var(--text-muted); }
+.footer-sub{ font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); }
+
+/* ============================================================
+   MOTION PREFERENCES
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  .brand-mark, .ring-progress, .bubble-ghost, .is-progress .status-dot{
+    animation: none !important;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header class="nav">
+  <a href="#top" class="nav-brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    NWisp
+  </a>
+  <nav class="nav-links">
+    <a href="#concept">Concept</a>
+    <a href="#features">Features</a>
+    <a href="#status">Status</a>
+    <a href="#involved">Get involved</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <a class="nav-cta" href="https://github.com/NIGHTWALKEROFC/NWisp-Private-conversations.-Temporary-presence" target="_blank" rel="noopener">Repo ↗</a>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">In development — Android first</p>
+      <h1>NWisp</h1>
+      <p class="tagline">Private conversations.<br>Temporary presence.</p>
+      <p class="hero-copy">A chat app that doesn't try to remember you. Talk under a username instead of your phone number, send messages that clear themselves off the server in a day, and post Stories that are gone by the time most apps would still be nudging you to like them.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#involved">Get involved</a>
+        <a class="btn btn-ghost" href="https://github.com/NIGHTWALKEROFC/NWisp-Private-conversations.-Temporary-presence" target="_blank" rel="noopener">Follow the build on GitHub</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="chat-row">
+            <div class="bubble bubble-in">hey, you free tonight?</div>
+          </div>
+          <div class="chat-row row-right">
+            <div class="bubble bubble-out">yeah, what's up</div>
+          </div>
+          <div class="chat-row">
+            <div class="bubble bubble-in bubble-ghost">this one's already fading —</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="presence-ring">
+        <svg viewBox="0 0 120 120" class="ring-svg">
+          <circle class="ring-track" cx="60" cy="60" r="52"/>
+          <circle class="ring-progress" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="ring-label">
+          <span class="ring-number">24</span>
+          <span class="ring-unit">hours</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCEPT -->
+  <section id="concept" class="concept">
+    <p class="section-eyebrow">How presence works here</p>
+    <h2 class="section-title">Three ideas the whole app is built around.</h2>
+
+    <div class="pillars">
+      <article class="pillar">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12Z" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 21.4c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Your username is the whole identity</h3>
+        <p>Sign up with an email or a phone number, but neither ever appears on your profile. People see a username and whatever bio you choose — nothing they didn't get from you directly.</p>
+      </article>
+
+      <article class="pillar">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="10.5" width="14" height="10" rx="1.6" stroke="currentColor" stroke-width="1.6"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <h3>Encrypted before it leaves your phone</h3>
+        <p>Messages are encrypted on the sending device and decrypted on the receiving one, using established protocols rather than anything homemade. The server's job is to relay bytes, not read them.</p>
+      </article>
+
+      <article class="pillar">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h3>The server has a short memory</h3>
+        <p>Delivered messages are cleared from the server within 24 hours — undelivered ones too. Stories expire on the same clock. What's on your own device is yours to keep or delete.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="features">
+    <p class="section-eyebrow">What's actually in it</p>
+    <h2 class="section-title">Chat and Stories, done properly. Nothing else, on purpose.</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>Chat</h4>
+        <ul>
+          <li>1:1 and small group messaging</li>
+          <li>Text, images, files, video up to 20 MB</li>
+          <li>Replies and reactions</li>
+          <li>Delivery and read status, with a switch to turn it off</li>
+          <li>Per-chat auto-delete timers</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h4>Stories</h4>
+        <ul>
+          <li>Photos and short videos, gone in 24 hours</li>
+          <li>Reply to a Story straight into chat</li>
+          <li>Reactions, no public like counts</li>
+          <li>Pick exactly who can see each Story</li>
+          <li>Custom circles — Friends, Family, Work, whatever you name</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h4>Privacy controls</h4>
+        <ul>
+          <li>Choose who can message you or add you to groups</li>
+          <li>Hide online status and last-seen independently</li>
+          <li>Decide if your number can be used to find you</li>
+          <li>Email and phone stay private by default, always</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h4>Security</h4>
+        <ul>
+          <li>App-open PIN, biometric lock where supported</li>
+          <li>Device and session management, remote logout</li>
+          <li>Login alerts for new devices</li>
+          <li>Local data protected by the device's secure storage</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- HONEST SCOPE -->
+  <section class="scope">
+    <p class="section-eyebrow">Built honestly, not oversold</p>
+    <h2 class="section-title">What's deliberately not here yet.</h2>
+    <p class="scope-copy">No feed. No permanent posts. No reels or livestreaming. No voice or video calls in this version. No ads, no premium tier, no paid anything — v1 is free with nothing behind a paywall, because the goal right now is a small, reliable, private app before it's a big one.</p>
+    <div class="chip-row">
+      <span class="chip">No feed</span>
+      <span class="chip">No permanent posts</span>
+      <span class="chip">No calls yet</span>
+      <span class="chip">No reels</span>
+      <span class="chip">No livestreaming</span>
+      <span class="chip">No ads</span>
+      <span class="chip">No premium tier</span>
+    </div>
+  </section>
+
+  <!-- STATUS -->
+  <section id="status" class="status">
+    <p class="section-eyebrow">Right now</p>
+    <h2 class="section-title">Where the build actually stands.</h2>
+    <p class="status-copy">NWisp is being built in the open, by one developer, entirely from a phone — no laptop, no dev machine. Core chat and Stories work end to end. What's left before a real release is mostly the unglamorous stuff: notification delivery, tightening the server-side rules, and phone-number sign-in. There's no fixed release date yet, and that's said here on purpose instead of promising one.</p>
+    <div class="status-track">
+      <div class="status-item is-done">
+        <span class="status-dot"></span>
+        <span class="status-text">Accounts, contacts, and 1:1 chat</span>
+      </div>
+      <div class="status-item is-done">
+        <span class="status-dot"></span>
+        <span class="status-text">Themes, PIN lock, auto-delete timers</span>
+      </div>
+      <div class="status-item is-progress">
+        <span class="status-dot"></span>
+        <span class="status-text">Push notifications</span>
+      </div>
+      <div class="status-item is-progress">
+        <span class="status-dot"></span>
+        <span class="status-text">Server-side security rules</span>
+      </div>
+      <div class="status-item is-pending">
+        <span class="status-dot"></span>
+        <span class="status-text">Phone number sign-in</span>
+      </div>
+      <div class="status-item is-pending">
+        <span class="status-dot"></span>
+        <span class="status-text">First public build</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- GET INVOLVED -->
+  <section id="involved" class="involved">
+    <div class="involved-inner">
+      <p class="section-eyebrow">Get involved</p>
+      <h2 class="section-title">Want to be part of this?</h2>
+      <p class="involved-copy">NWisp is one person's project and it's better with more hands and eyes on it. If any of this sounds like you, reach out — there's room to actually shape where this goes.</p>
+      <div class="involved-grid">
+        <div class="involved-card">
+          <h4>Early testers</h4>
+          <p>Try builds before release and tell me what breaks or what feels off.</p>
+        </div>
+        <div class="involved-card">
+          <h4>Flutter / Firebase / Supabase devs</h4>
+          <p>Help with notifications, security rules, or the parts still in progress.</p>
+        </div>
+        <div class="involved-card">
+          <h4>Design & feedback</h4>
+          <p>Opinions on UI, wording, or what a privacy-first app should and shouldn't do.</p>
+        </div>
+        <div class="involved-card">
+          <h4>Just curious</h4>
+          <p>Questions, ideas, or plain interest are welcome too — say hello.</p>
+        </div>
+      </div>
+      <a class="btn btn-primary" href="mailto:rinshan602@gmail.com?subject=Interested%20in%20NWisp">Contact the developer</a>
+    </div>
+  </section>
+
+  <!-- DEVELOPER / CONTACT -->
+  <section id="contact" class="contact">
+    <p class="section-eyebrow">Built by</p>
+    <h2 class="section-title">Mohammed Rinshan — NightWalker</h2>
+    <p class="contact-copy">A self-taught developer from Malappuram, Kerala, building apps and security tools from a single Android phone, no laptop involved. NWisp is the current main project. More at the <a href="https://nightwalkerofc.github.io/" target="_blank" rel="noopener">portfolio site</a>.</p>
+
+    <div class="contact-grid">
+      <a class="contact-card" href="mailto:rinshan602@gmail.com" target="_blank" rel="noopener">
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m4 6.5 8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <div><span class="contact-label">Email</span><span class="contact-value">rinshan602@gmail.com</span></div>
+      </a>
+      <a class="contact-card" href="https://www.instagram.com/nightwalker.ofc" target="_blank" rel="noopener">
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="7" r="1.1" fill="currentColor"/></svg></div>
+        <div><span class="contact-label">Instagram</span><span class="contact-value">@nightwalker.ofc</span></div>
+      </a>
+      <a class="contact-card" href="https://t.me/nightwalker_ofc" target="_blank" rel="noopener">
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 4 3 11.2l6 2.2M21 4l-3.2 16-6.8-5.6M21 4l-11.5 9.4M9 13.4v5.4l3-3.3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+        <div><span class="contact-label">Telegram</span><span class="contact-value">@nightwalker_ofc</span></div>
+      </a>
+      <a class="contact-card" href="https://t.me/nightwalker_ofc0" target="_blank" rel="noopener">
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 4 3 11.2l6 2.2M21 4l-3.2 16-6.8-5.6M21 4l-11.5 9.4M9 13.4v5.4l3-3.3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+        <div><span class="contact-label">Telegram (alt)</span><span class="contact-value">@nightwalker_ofc0</span></div>
+      </a>
+      <a class="contact-card" href="https://github.com/NIGHTWALKEROFC/NWisp-Private-conversations.-Temporary-presence" target="_blank" rel="noopener">
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.8c-2.7.6-3.3-1.3-3.3-1.3-.4-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .8.1-.7.4-1.1.6-1.4-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-1.9 1-2.6-.1-.3-.4-1.4.1-2.9 0 0 .8-.3 2.8 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .6 1.5.2 2.6.1 2.9.6.7 1 1.6 1 2.6 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <div><span class="contact-label">GitHub</span><span class="contact-value">NWisp repo</span></div>
+      </a>
+      <a class="contact-card" href="https://nightwalkerofc.github.io/" target="_blank" rel="noopener">
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.6"/><path d="M2.8 12h18.4M12 2.8c2.4 2.5 3.7 5.7 3.7 9.2s-1.3 6.7-3.7 9.2c-2.4-2.5-3.7-5.7-3.7-9.2S9.6 5.3 12 2.8Z" stroke="currentColor" stroke-width="1.6"/></svg></div>
+        <div><span class="contact-label">Portfolio</span><span class="contact-value">nightwalkerofc.github.io</span></div>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>NWisp — private conversations, temporary presence.</p>
+  <p class="footer-sub">Built by Mohammed Rinshan (NightWalker) · Malappuram, Kerala · 2026</p>
+</footer>
+
+</body>
+</html>
