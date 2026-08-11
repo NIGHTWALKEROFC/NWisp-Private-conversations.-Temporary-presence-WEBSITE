@@ -8,6 +8,13 @@
 <meta property="og:title" content="NWisp — Private conversations. Temporary presence.">
 <meta property="og:description" content="A privacy-first chat app. Messages live on the server for 24 hours, then they're gone. Username-first identity, end-to-end encrypted chat, disappearing Stories.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NWisp — Private conversations. Temporary presence.">
+<meta name="twitter:description" content="A privacy-first chat app with 24-hour disappearing messages and Stories.">
+<meta name="twitter:image" content="og-image.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%23090B10' stroke='%23FFB37B' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23FFB37B'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -141,8 +148,56 @@ p{ margin: 0; }
 }
 .nav-cta:hover{ border-color: var(--amber-dim); color: var(--amber); }
 
+.nav-toggle{
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg-alt);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nav-toggle span{
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  margin: 0 auto;
+  background: var(--text-muted);
+  transition: transform .2s ease, opacity .2s ease;
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(1){ transform: translateY(6.5px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3){ transform: translateY(-6.5px) rotate(-45deg); }
+
 @media (max-width: 760px){
-  .nav-links{ display: none; }
+  .nav-links{
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(9,11,16,0.98);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-soft);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .25s ease;
+  }
+  .nav-links.is-open{ max-height: 400px; }
+  .nav-links a{
+    padding: 16px clamp(20px, 5vw, 56px);
+    border-top: 1px solid var(--border-soft);
+    font-size: 15px;
+  }
+  .nav-cta{ display: none; }
+  .nav-toggle{ display: flex; }
 }
 
 /* ============================================================
@@ -442,8 +497,14 @@ section:not(.hero){
 .status-copy{
   color: var(--text-muted);
   max-width: 66ch;
-  margin-bottom: 36px;
+  margin-bottom: 14px;
   font-size: 15.5px;
+}
+.status-asof{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 36px;
 }
 .status-track{
   display: grid;
@@ -694,7 +755,7 @@ section:not(.hero){
     <span class="brand-mark" aria-hidden="true"></span>
     NWisp
   </a>
-  <nav class="nav-links">
+  <nav class="nav-links" id="nav-links">
     <a href="#concept">Concept</a>
     <a href="#features">Features</a>
     <a href="#status">Status</a>
@@ -703,6 +764,9 @@ section:not(.hero){
     <a href="#" id="updates-trigger">App updates</a>
   </nav>
   <a class="nav-cta" href="https://github.com/NIGHTWALKEROFC" target="_blank" rel="noopener">GitHub ↗</a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+    <span></span><span></span><span></span>
+  </button>
 </header>
 
 <main id="top">
@@ -849,6 +913,7 @@ section:not(.hero){
     <p class="section-eyebrow">Right now</p>
     <h2 class="section-title">Where the build actually stands.</h2>
     <p class="status-copy">NWisp is being built in the open by one developer. Core chat and Stories work end to end. What's left before a real release is mostly the unglamorous stuff: notification delivery, tightening the server-side rules, and phone-number sign-in. There's no fixed release date yet, and that's said here on purpose instead of promising one.</p>
+    <p class="status-asof">Status as of August 2026</p>
     <div class="status-track">
       <div class="status-item is-done">
         <span class="status-dot"></span>
@@ -960,7 +1025,7 @@ section:not(.hero){
 <footer class="footer">
   <p>NWisp — private conversations, temporary presence.</p>
   <p class="footer-sub">Built by Mohammed Rinshan (NightWalker) · Malappuram, Kerala · 2026</p>
-  <p class="footer-sub">This site doesn't use cookies or trackers of any kind.</p>
+  <p class="footer-sub">This site uses no cookies, no analytics, and no trackers of any kind.</p>
 </footer>
 
 <!-- APP UPDATES — off-flow panel, opened only from the nav link -->
@@ -983,10 +1048,14 @@ section:not(.hero){
     var trigger = document.getElementById('updates-trigger');
     var overlay = document.getElementById('updates-overlay');
     var closeBtn = document.getElementById('updates-close');
+    var navToggle = document.getElementById('nav-toggle');
+    var navLinks = document.getElementById('nav-links');
 
     function openOverlay(e){
       if(e) e.preventDefault();
       overlay.classList.add('is-open');
+      navLinks.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
     }
     function closeOverlay(){
       overlay.classList.remove('is-open');
@@ -998,7 +1067,21 @@ section:not(.hero){
       if(e.target === overlay) closeOverlay();
     });
     document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape') closeOverlay();
+      if(e.key === 'Escape'){ closeOverlay(); closeMenu(); }
+    });
+
+    function closeMenu(){
+      navLinks.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+    navToggle.addEventListener('click', function(){
+      var isOpen = navLinks.classList.toggle('is-open');
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    navLinks.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(e){
+        if(a.id !== 'updates-trigger') closeMenu();
+      });
     });
   })();
 </script>
