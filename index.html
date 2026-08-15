@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NWisp — Private conversations. Temporary presence.</title>
-<meta name="description" content="NWisp is a privacy-first chat app where messages disappear on a timer you set and Stories vanish after 24 hours. Sign up with just an email and username — no phone number required. Android only, in development.">
-<meta property="og:title" content="NWisp — Private conversations. Temporary presence.">
-<meta property="og:description" content="A privacy-first chat app. Messages are encrypted on your device, disappear on a timer you set, and are never stored long-term on the server. Username-first identity, disappearing Stories.">
+<title>NWisp — Your conversations. Your privacy.</title>
+<meta name="description" content="NWisp is a privacy-first chat app where messages are encrypted on your device and stored there, not on a server. Sign up with just an email and username — no phone number required. Android only, in development.">
+<meta property="og:title" content="NWisp — Your conversations. Your privacy.">
+<meta property="og:description" content="A privacy-first chat app. Messages are encrypted on your device, kept there instead of on a server, with an optional disappearing-messages toggle if you want a chat to clear itself. Username-first identity, disappearing Stories.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="NWisp — Private conversations. Temporary presence.">
-<meta name="twitter:description" content="A privacy-first chat app with disappearing messages, 24-hour Stories, and no phone number required.">
+<meta name="twitter:title" content="NWisp — Your conversations. Your privacy.">
+<meta name="twitter:description" content="A privacy-first chat app with on-device encrypted storage, 24-hour Stories, and no phone number required.">
 <meta name="twitter:image" content="og-image.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%23090B10' stroke='%23FFB37B' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23FFB37B'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -776,8 +776,8 @@ section:not(.hero){
     <div class="hero-text">
       <p class="eyebrow">In development — Android first</p>
       <h1>NWisp</h1>
-      <p class="tagline">Private conversations.<br>Temporary presence.</p>
-      <p class="hero-copy">A chat app that doesn't try to remember you. Sign up with just an email and a username — no phone number needed. Messages are encrypted on your device and disappear on a timer you set, and Stories are gone in 24 hours by the time most apps would still be nudging you to like them.</p>
+      <p class="tagline">Your conversations.<br>Your privacy.</p>
+      <p class="hero-copy">A chat app built the way messaging should work: encrypted on your device and kept there, not on a server. Sign up with just an email and a username — no phone number needed. Want a conversation to clear itself automatically? Turn on disappearing messages for that chat; it's off by default, so everything else stays the way any normal conversation would. Stories still fade after 24 hours.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#contact">Get involved</a>
         <a class="btn btn-ghost" href="https://github.com/NIGHTWALKEROFC" target="_blank" rel="noopener">Follow on GitHub</a>
@@ -795,7 +795,7 @@ section:not(.hero){
             <div class="bubble bubble-out">yeah, what's up</div>
           </div>
           <div class="chat-row">
-            <div class="bubble bubble-in bubble-ghost">this one's already fading —</div>
+            <div class="bubble bubble-in">this stays right where it is</div>
           </div>
         </div>
       </div>
@@ -807,7 +807,7 @@ section:not(.hero){
         </svg>
         <div class="ring-label">
           <span class="ring-number">24</span>
-          <span class="ring-unit">hours</span>
+          <span class="ring-unit">hr stories</span>
         </div>
       </div>
     </div>
@@ -839,8 +839,8 @@ section:not(.hero){
         <div class="pillar-icon">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-        <h3>The server has a short memory</h3>
-        <p>Messages pass through the server only briefly, for delivery, then they're deleted — there's no long-term server storage. What remains lives on your device and the other person's, encrypted at rest, until the disappearing-message timer you set clears it. Stories always fade after 24 hours.</p>
+        <h3>Your device keeps the history, not the server</h3>
+        <p>Messages pass through the server just long enough for delivery, then they're deleted — nothing is stored there long-term. Everything that matters lives on your device and the other person's, encrypted at rest, for as long as you want it there. Want a chat to clear itself automatically instead? Turn on disappearing messages for that conversation — it's off by default.</p>
       </article>
     </div>
   </section>
@@ -858,7 +858,8 @@ section:not(.hero){
           <li>Replies, reactions, and typing indicators</li>
           <li>Delivered and read receipts, online status and last-seen</li>
           <li>Pin, copy, delete for yourself, or delete for everyone</li>
-          <li>Disappearing timer — an app-wide default, or set per conversation</li>
+          <li>Messages stored locally on your device, encrypted at rest</li>
+          <li>Disappearing messages — off by default, turn on per conversation</li>
         </ul>
       </div>
       <div class="feature-card">
@@ -881,7 +882,6 @@ section:not(.hero){
         <h4>Security &amp; appearance</h4>
         <ul>
           <li>Optional app-lock PIN on top of your device's own lock</li>
-          <li>Messages encrypted at rest on your device</li>
           <li>Light, dark, or system theme</li>
           <li>Custom accent color</li>
         </ul>
@@ -920,7 +920,7 @@ section:not(.hero){
       </div>
       <div class="status-item is-done">
         <span class="status-dot"></span>
-        <span class="status-text">Themes, PIN lock, auto-delete timers</span>
+        <span class="status-text">Themes, PIN lock, disappearing-message toggle</span>
       </div>
       <div class="status-item is-progress">
         <span class="status-dot"></span>
@@ -949,11 +949,15 @@ section:not(.hero){
       </details>
       <details class="faq-item">
         <summary>Why build another chat app instead of using Signal or Telegram?</summary>
-        <p>Both are excellent, but for different goals. NWisp is built specifically around username-first identity, messages that disappear on a timer you control, and Stories that always clear after 24 hours, in one app — not trying to replace either.</p>
+        <p>Both are excellent, but for different goals. NWisp is built specifically around username-first identity, messages kept encrypted on your device instead of a server, and an optional disappearing-messages toggle for chats you want to clear themselves — not trying to replace either.</p>
       </details>
       <details class="faq-item">
-        <summary>What exactly happens to a message once it disappears?</summary>
-        <p>The server never keeps messages long-term to begin with — it only holds a message briefly to deliver it, then deletes it. Once your disappearing-message timer runs out, the message is removed from both your device and the other person's, where it was stored encrypted at rest.</p>
+        <summary>Where are my messages actually stored?</summary>
+        <p>On your device and the other person's, encrypted at rest — that's the copy that stays. The server only ever holds a message briefly to deliver it, then deletes its copy; it isn't a backup or an archive. If you turn on disappearing messages for a chat, the on-device copies clear too once your timer runs out.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Are messages deleted automatically?</summary>
+        <p>Not unless you turn it on. By default, a conversation stays on your device the way you'd expect from any chat app — encrypted, and there until you delete it. Disappearing messages is an opt-in setting per conversation, not the default.</p>
       </details>
       <details class="faq-item">
         <summary>Can you, or the server, read my messages?</summary>
@@ -984,12 +988,12 @@ section:not(.hero){
 
   <!-- DEVELOPER / CONTACT -->
   <section id="contact" class="contact">
-    <p class="section-eyebrow">Built by</p>
+    <p class="section-eyebrow">Get in touch</p>
     <h2 class="section-title">Mohammed Rinshan — NightWalker</h2>
-    <p class="contact-copy">A self-taught developer from Malappuram, Kerala, building apps and security tools. NWisp is the current main project. More at the <a href="https://nightwalkerofc.github.io/" target="_blank" rel="noopener">portfolio site</a> — and if you'd like to test, contribute, or just ask something, reach out below.</p>
+    <p class="contact-copy">Independent developer based in Malappuram, Kerala, building privacy-focused apps and security tools. NWisp is the current project — see more at the <a href="https://nightwalkerofc.github.io/" target="_blank" rel="noopener">portfolio site</a>, or reach out below for early access, collaboration, or questions.</p>
 
     <a class="btn btn-primary notify-btn" href="mailto:rinshan602@gmail.com?subject=Notify%20me%20when%20NWisp%20launches&body=Hey%2C%20I%27d%20like%20to%20be%20notified%20when%20NWisp%20is%20ready.">Get notified at launch</a>
-    <p class="notify-note">This just opens your email app with the message pre-filled — nothing is stored or signed up automatically. Following on Instagram works too; that's where release updates get posted first.</p>
+    <p class="notify-note">Opens a pre-filled email — nothing is submitted automatically. Release updates are also posted on Instagram first.</p>
 
     <div class="contact-grid">
       <a class="contact-card" href="mailto:rinshan602@gmail.com" target="_blank" rel="noopener">
@@ -1002,11 +1006,11 @@ section:not(.hero){
       </a>
       <a class="contact-card" href="https://t.me/nightwalker_ofc" target="_blank" rel="noopener">
         <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 4 3 11.2l6 2.2M21 4l-3.2 16-6.8-5.6M21 4l-11.5 9.4M9 13.4v5.4l3-3.3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
-        <div><span class="contact-label">Telegram</span><span class="contact-value">@nightwalker_ofc</span></div>
+        <div><span class="contact-label">Telegram · DM</span><span class="contact-value">@nightwalker_ofc</span></div>
       </a>
       <a class="contact-card" href="https://t.me/nightwalker_ofc0" target="_blank" rel="noopener">
         <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 4 3 11.2l6 2.2M21 4l-3.2 16-6.8-5.6M21 4l-11.5 9.4M9 13.4v5.4l3-3.3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
-        <div><span class="contact-label">Telegram</span><span class="contact-value">@nightwalker_ofc0</span></div>
+        <div><span class="contact-label">Telegram · Channel</span><span class="contact-value">@nightwalker_ofc0</span></div>
       </a>
       <a class="contact-card" href="https://github.com/NIGHTWALKEROFC" target="_blank" rel="noopener">
         <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.8c-2.7.6-3.3-1.3-3.3-1.3-.4-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .8.1-.7.4-1.1.6-1.4-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-1.9 1-2.6-.1-.3-.4-1.4.1-2.9 0 0 .8-.3 2.8 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .6 1.5.2 2.6.1 2.9.6.7 1 1.6 1 2.6 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
@@ -1022,7 +1026,7 @@ section:not(.hero){
 </main>
 
 <footer class="footer">
-  <p>NWisp — private conversations, temporary presence.</p>
+  <p>NWisp — your conversations, your privacy.</p>
   <p class="footer-sub">Built by Mohammed Rinshan (NightWalker) · Malappuram, Kerala · 2026</p>
   <p class="footer-sub">This site uses no cookies, no analytics, and no trackers of any kind.</p>
 </footer>
