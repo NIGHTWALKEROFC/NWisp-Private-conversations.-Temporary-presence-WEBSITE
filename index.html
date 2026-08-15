@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NWisp — Private conversations. Temporary presence.</title>
-<meta name="description" content="NWisp is a privacy-first chat app with 24-hour disappearing messages and Stories, built username-first with no permanent server history. In development for Android.">
+<meta name="description" content="NWisp is a privacy-first chat app where messages disappear on a timer you set and Stories vanish after 24 hours. Sign up with just an email and username — no phone number required. Android only, in development.">
 <meta property="og:title" content="NWisp — Private conversations. Temporary presence.">
-<meta property="og:description" content="A privacy-first chat app. Messages live on the server for 24 hours, then they're gone. Username-first identity, end-to-end encrypted chat, disappearing Stories.">
+<meta property="og:description" content="A privacy-first chat app. Messages are encrypted on your device, disappear on a timer you set, and are never stored long-term on the server. Username-first identity, disappearing Stories.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="NWisp — Private conversations. Temporary presence.">
-<meta name="twitter:description" content="A privacy-first chat app with 24-hour disappearing messages and Stories.">
+<meta name="twitter:description" content="A privacy-first chat app with disappearing messages, 24-hour Stories, and no phone number required.">
 <meta name="twitter:image" content="og-image.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%23090B10' stroke='%23FFB37B' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23FFB37B'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -777,7 +777,7 @@ section:not(.hero){
       <p class="eyebrow">In development — Android first</p>
       <h1>NWisp</h1>
       <p class="tagline">Private conversations.<br>Temporary presence.</p>
-      <p class="hero-copy">A chat app that doesn't try to remember you. Talk under a username instead of your phone number, send messages that clear themselves off the server in a day, and post Stories that are gone by the time most apps would still be nudging you to like them.</p>
+      <p class="hero-copy">A chat app that doesn't try to remember you. Sign up with just an email and a username — no phone number needed. Messages are encrypted on your device and disappear on a timer you set, and Stories are gone in 24 hours by the time most apps would still be nudging you to like them.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#contact">Get involved</a>
         <a class="btn btn-ghost" href="https://github.com/NIGHTWALKEROFC" target="_blank" rel="noopener">Follow on GitHub</a>
@@ -824,7 +824,7 @@ section:not(.hero){
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12Z" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 21.4c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
         <h3>Your username is the whole identity</h3>
-        <p>Sign up with an email or a phone number, but neither ever appears on your profile. People see a username and whatever bio you choose — nothing they didn't get from you directly.</p>
+        <p>Sign up with just an email and a username — no phone number required, and your email never appears on your profile. People see a username and whatever bio you choose, nothing else.</p>
       </article>
 
       <article class="pillar">
@@ -840,7 +840,7 @@ section:not(.hero){
           <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
         <h3>The server has a short memory</h3>
-        <p>Delivered messages are cleared from the server within 24 hours — undelivered ones too. Stories expire on the same clock. What's on your own device is yours to keep or delete.</p>
+        <p>Messages pass through the server only briefly, for delivery, then they're deleted — there's no long-term server storage. What remains lives on your device and the other person's, encrypted at rest, until the disappearing-message timer you set clears it. Stories always fade after 24 hours.</p>
       </article>
     </div>
   </section>
@@ -854,39 +854,36 @@ section:not(.hero){
       <div class="feature-card">
         <h4>Chat</h4>
         <ul>
-          <li>1:1 and small group messaging</li>
-          <li>Text, images, files, video up to 20 MB</li>
-          <li>Replies and reactions</li>
-          <li>Delivery and read status, with a switch to turn it off</li>
-          <li>Per-chat auto-delete timers</li>
+          <li>1:1 real-time chat — no groups yet</li>
+          <li>Replies, reactions, and typing indicators</li>
+          <li>Delivered and read receipts, online status and last-seen</li>
+          <li>Pin, copy, delete for yourself, or delete for everyone</li>
+          <li>Disappearing timer — an app-wide default, or set per conversation</li>
         </ul>
       </div>
       <div class="feature-card">
         <h4>Stories</h4>
         <ul>
-          <li>Photos and short videos, gone in 24 hours</li>
-          <li>Reply to a Story straight into chat</li>
-          <li>Reactions, no public like counts</li>
-          <li>Pick exactly who can see each Story</li>
-          <li>Custom circles — Friends, Family, Work, whatever you name</li>
+          <li>Post a Story, visible to your contacts</li>
+          <li>Disappears automatically after 24 hours, no exceptions</li>
         </ul>
       </div>
       <div class="feature-card">
-        <h4>Privacy controls</h4>
+        <h4>Contacts &amp; privacy</h4>
         <ul>
-          <li>Choose who can message you or add you to groups</li>
-          <li>Hide online status and last-seen independently</li>
-          <li>Decide if your number can be used to find you</li>
-          <li>Email and phone stay private by default, always</li>
+          <li>Add people by username — no phone number needed to find or be found</li>
+          <li>Friend-style requests before someone can message you</li>
+          <li>Block anyone — their messages stop reaching you entirely</li>
+          <li>Your email is never shown on your profile</li>
         </ul>
       </div>
       <div class="feature-card">
-        <h4>Security</h4>
+        <h4>Security &amp; appearance</h4>
         <ul>
-          <li>App-open PIN, biometric lock where supported</li>
-          <li>Device and session management, remote logout</li>
-          <li>Login alerts for new devices</li>
-          <li>Local data protected by the device's secure storage</li>
+          <li>Optional app-lock PIN on top of your device's own lock</li>
+          <li>Messages encrypted at rest on your device</li>
+          <li>Light, dark, or system theme</li>
+          <li>Custom accent color</li>
         </ul>
       </div>
     </div>
@@ -898,9 +895,11 @@ section:not(.hero){
     <h2 class="section-title">What's deliberately not here yet.</h2>
     <p class="scope-copy">v1 is free, with nothing behind a paywall — the goal is a small, reliable, private app before it's a big one.</p>
     <div class="chip-row">
+      <span class="chip">No group chats yet</span>
+      <span class="chip">No voice or video calls yet</span>
+      <span class="chip">No web or desktop app yet</span>
       <span class="chip">No feed</span>
       <span class="chip">No permanent posts</span>
-      <span class="chip">No calls yet</span>
       <span class="chip">No reels</span>
       <span class="chip">No livestreaming</span>
       <span class="chip">No ads</span>
@@ -912,7 +911,7 @@ section:not(.hero){
   <section id="status" class="status">
     <p class="section-eyebrow">Right now</p>
     <h2 class="section-title">Where the build actually stands.</h2>
-    <p class="status-copy">NWisp is being built in the open by one developer. Core chat and Stories work end to end. What's left before a real release is mostly the unglamorous stuff: notification delivery, tightening the server-side rules, and phone-number sign-in. There's no fixed release date yet, and that's said here on purpose instead of promising one.</p>
+    <p class="status-copy">NWisp is being built in the open by one developer. Core chat and Stories work end to end. What's left before a real release is mostly the unglamorous stuff: notification delivery and tightening the server-side rules. There's no fixed release date yet, and that's said here on purpose instead of promising one.</p>
     <p class="status-asof">Status as of August 2026</p>
     <div class="status-track">
       <div class="status-item is-done">
@@ -933,10 +932,6 @@ section:not(.hero){
       </div>
       <div class="status-item is-pending">
         <span class="status-dot"></span>
-        <span class="status-text">Phone number sign-in</span>
-      </div>
-      <div class="status-item is-pending">
-        <span class="status-dot"></span>
         <span class="status-text">First public build</span>
       </div>
     </div>
@@ -954,11 +949,11 @@ section:not(.hero){
       </details>
       <details class="faq-item">
         <summary>Why build another chat app instead of using Signal or Telegram?</summary>
-        <p>Both are excellent, but for different goals. NWisp is built specifically around username-first identity plus a hard 24-hour server retention limit applied to both chat and Stories in one app — not trying to replace either.</p>
+        <p>Both are excellent, but for different goals. NWisp is built specifically around username-first identity, messages that disappear on a timer you control, and Stories that always clear after 24 hours, in one app — not trying to replace either.</p>
       </details>
       <details class="faq-item">
-        <summary>What exactly happens to a message after 24 hours?</summary>
-        <p>Once it's delivered, it's cleared off the server. If it was never delivered, it's removed once the same 24-hour limit is hit. A copy may still exist in the recipient's local device storage until deleted there.</p>
+        <summary>What exactly happens to a message once it disappears?</summary>
+        <p>The server never keeps messages long-term to begin with — it only holds a message briefly to deliver it, then deletes it. Once your disappearing-message timer runs out, the message is removed from both your device and the other person's, where it was stored encrypted at rest.</p>
       </details>
       <details class="faq-item">
         <summary>Can you, or the server, read my messages?</summary>
@@ -966,7 +961,11 @@ section:not(.hero){
       </details>
       <details class="faq-item">
         <summary>Do I need to give my phone number to sign up?</summary>
-        <p>No. You can create an account with just an email and a username. A phone number is only used if you choose that sign-up method instead, and it's never shown on your profile.</p>
+        <p>No — sign-up only needs an email and a username. There's no phone number field at all, and your email is never shown on your profile.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does NWisp have group chats or calls?</summary>
+        <p>Not yet. v1 is 1:1 chat and Stories only — no group messaging and no voice or video calls. Either might come later, but there's no promise or timeline for that right now.</p>
       </details>
       <details class="faq-item">
         <summary>Is there an iOS version planned?</summary>
